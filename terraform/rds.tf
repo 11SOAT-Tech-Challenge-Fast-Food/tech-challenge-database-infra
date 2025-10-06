@@ -1,6 +1,6 @@
 resource "aws_db_subnet_group" "postgres_subnet_group" {
   name       = "${var.project_name}-subnet-group"
-  subnet_ids = var.private_subnet_ids
+  subnet_ids = data.terraform_remote_state.core.outputs.subnet_id
 
   tags = {
     Name = "${var.project_name}-subnet-group"
