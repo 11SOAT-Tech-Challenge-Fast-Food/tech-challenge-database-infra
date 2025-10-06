@@ -1,7 +1,7 @@
 resource "aws_security_group" "rds_sg" {
   name        = "${var.project_name}-rds-sg"
   description = "Allow PostgreSQL traffic from app SG"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.terraform_remote_state.core.outputs.vpc_id
 
   ingress {
     description = "Allow PostgreSQL from app"

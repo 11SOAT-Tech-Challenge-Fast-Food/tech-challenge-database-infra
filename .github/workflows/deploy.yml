@@ -4,54 +4,56 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'terraform/**'
-      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  TF_CLOUD_ORGANIZATION: "fiap-pos-tc"
+  TF_WORKSPACE: "core-infra"
+  AWS_REGION: "us-east-1"
+  DB_NAME: ${{ secrets.DB_NAME }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_PASS: ${{ secrets.DB_PASS }}
 
 jobs:
-  deploy:
-    name: 'Terraform Deploy'
+  terraform:
     runs-on: ubuntu-latest
     environment: production
-
-    permissions:
-      id-token: write
-      contents: read
-      pull-requests: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 5.0.0
+          terraform_version: 1.12.2
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       - name: Terraform Init
+        working-directory: ./terraform
         run: terraform init
 
       - name: Terraform Validate
+        working-directory: ./terraform
         run: terraform validate
 
       - name: Terraform Plan
-        id: plan
-        run: terraform plan
-        continue-on-error: true
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+        working-directory: ./terraform
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply
+        working-directory: ./terraform
+        run: terraform apply -auto-approve tfplan \
+            -var="project_name=tech-challenge" \
+            -var="db_name=$DB_NAME" \
+            -var="db_username=$DB_USER" \
+            -var="db_password=$DB_PASS"
