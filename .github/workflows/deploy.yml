@@ -8,7 +8,7 @@ on:
 
 env:
   TF_CLOUD_ORGANIZATION: "fiap-pos-tc"
-  TF_WORKSPACE: "core-infra"
+  TF_WORKSPACE: "db-infra"
   AWS_REGION: "us-east-1"
   DB_NAME: ${{ secrets.DB_NAME }}
   DB_USER: ${{ secrets.DB_USER }}
