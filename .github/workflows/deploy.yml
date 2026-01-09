@@ -13,6 +13,9 @@ env:
   DB_NAME: ${{ secrets.DB_NAME }}
   DB_USER: ${{ secrets.DB_USER }}
   DB_PASS: ${{ secrets.DB_PASS }}
+  CUSTOMER_PASS: ${{ secrets.CUSTOMER_PASSWORD }}
+  PAYMENT_PASS: ${{ secrets.PAYMENT_PASSWORD }}
+  PRODUCT_PASS: ${{ secrets.PRODUCT_PASSWORD }}
 
 jobs:
   terraform:
@@ -52,7 +55,10 @@ jobs:
           terraform plan -out=tfplan \
             -var="db_name=${{ secrets.DB_NAME }}" \
             -var="db_username=${{ secrets.DB_USER }}" \
-            -var="db_password=${{ secrets.DB_PASS }}"
+            -var="db_password=${{ secrets.DB_PASS }}" \
+            -var="customer_password=${{ secrets.CUSTOMER_PASSWORD }}" \
+            -var="payment_password=${{ secrets.PAYMENT_PASSWORD }}" \
+            -var="product_password=${{ secrets.PRODUCT_PASSWORD }}"
       
       - name: Terraform Apply
         working-directory: ./terraform

@@ -16,6 +16,12 @@ variable "db_name" {
   default     = "ordermanagementdb"
 }
 
+variable "db_schemas" {
+  description = "Schemas criados para os microsserviços"
+  type        = list(string)
+  default     = ["customer", "payment", "product"]
+}
+
 variable "db_username" {
   description = "Usuario banco"
   type        = string
@@ -27,6 +33,27 @@ variable "db_password" {
   type        = string
   sensitive   = true
   default     = "" #passdb12345
+}
+
+variable "customer_password" {
+  description = "Senha do usuário customer_user"
+  type        = string
+  sensitive   = true
+  default     = "" # senha para customer
+}
+
+variable "payment_password" {
+  description = "Senha do usuário payment_user"
+  type        = string
+  sensitive   = true
+  default     = "" # senha para payment
+}
+
+variable "product_password" {
+  description = "Senha do usuário product_user"
+  type        = string
+  sensitive   = true
+  default     = "" # senha para product
 }
 
 variable "cidr_vpc" {
